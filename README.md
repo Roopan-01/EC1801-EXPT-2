@@ -21,8 +21,59 @@ File name	Purpose
 logic_gates.v	Logic-gate RTL
 logic_gates_tb.v	All input combinations and VCD generation
  # Verilog  Program
+ ```
+// gedit basic_gates.v
+
+module basic_gates (
+    input  wire a,
+    input  wire b,
+    output wire y_nand,
+    output wire y_nor,
+    output wire y_xor
+);
+
+    assign y_nand = ~(a & b);   // NAND gate
+    assign y_nor  = ~(a | b);   // NOR gate
+    assign y_xor  = a ^ b;      // XOR gate
+
+endmodule
+```
 
 # **Test Bench Program**
+```
+module tb2;
+
+    reg  a, b;
+    wire y_nand, y_nor, y_xor;
+
+    // Instantiate the design under test (DUT)
+    basic_gates uut (
+        .a(a),
+        .b(b),
+        .y_nand(y_nand),
+        .y_nor(y_nor),
+        .y_xor(y_xor)
+    );
+
+    initial begin
+        // ---- VCD dump setup ----
+        $dumpfile("basic_gates.vcd");
+        $dumpvars(0, tb2);
+
+        // ---- Apply all 4 input combinations ----
+        $monitor("Time=%0t a=%b b=%b | NAND=%b NOR=%b XOR=%b",
+                 $time, a, b, y_nand, y_nor, y_xor);
+
+        a = 0; b = 0; #10;
+        a = 0; b = 1; #10;
+        a = 1; b = 0; #10;
+        a = 1; b = 1; #10;
+
+        $finish;
+    end
+
+endmodule
+```
 
 
 
@@ -71,6 +122,8 @@ Verify that y_or = 1 whenever a=1 OR b=1 (any input high forces the output high)
 Verify that y_not is always the exact complement of a, regardless of b.
 The waveform should agree with the truth table.
 # Expected Result
+<img width="1913" height="228" alt="Screenshot 2026-10-23 110715" src="https://github.com/user-attachments/assets/e19f1a24-569e-435c-8967-0be852e02fe8" />
+
 The basic logic gates — AND, OR, and NOT — were realized using Verilog HDL:
 Y_AND = A.B
 Y_OR = A+B
@@ -78,6 +131,7 @@ Y_NOT = A'
 The design was compiled and simulated using Synopsys VCS, and the functionality was verified using DVE waveform analysis, matching the expected truth table.
 Output
 # OUTPUT
+<img width="1920" height="1080" alt="Screenshot 2026-10-23 110803" src="https://github.com/user-attachments/assets/a5c9a410-683e-46ce-af0c-330b2ea527e1" />
 
 
  
